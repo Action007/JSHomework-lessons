@@ -1,9 +1,17 @@
 let money = 300;
-let income = 500;
-let addExpenses = 200;
-let deposit = 100;
+let income = 'музыка';
+let addExpenses = 'Интернет, Коммуналка, Курсы';
+let deposit = true;
 let mission = 1000;
-let period = '1 year';
+let period = '9';
+let budgetDay = 200;
 
-alert('Hello World');
-console.log('My First Code');
+console.log(typeof money);
+console.log(typeof income);
+console.log(typeof deposit);
+console.log(addExpenses.length);
+console.log('Период равен ' + period +' месяцев');
+console.log('Цель заработать ' + mission + ' долларов');
+console.log(addExpenses.toLowerCase());
+console.log(addExpenses.split(', '));
+console.log(budgetDay);
