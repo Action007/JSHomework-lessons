@@ -14,12 +14,6 @@ let budgetMonth = money - (amount1 + amount2);
 let final = Math.ceil(mission / budgetMonth);
 let budgetDay = Math.floor(budgetMonth / 30);
 
-let showThpeOf = function (data) {
-  console.log(typeof(data));
-};
-
-showThpeOf(money);
-
 console.log(typeof money);
 console.log(typeof income);
 console.log(typeof deposit);
