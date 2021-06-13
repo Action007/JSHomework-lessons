@@ -48,10 +48,16 @@ let appData = {
 
     appData.deposit = confirm("Есть ли у вас депозит в банке ?");
     for (let i = 0; i < 2; i++) {
-      let expenses = prompt('Введите обязательную статью расходов?');
-      let sum = +prompt('Во сколько это обойдется?');
+      let expenses;
+      let sum;
+      do {
+        expenses = prompt('Введите обязательную статью расходов?');
+      } while (!/^\D\S+$/.test(expenses) && isFinite(expenses));
+      do {
+        sum = prompt('Во сколько это обойдется?');
+      } while (!isNumber(sum));
 
-      appData.expenses[expenses] = sum;
+      appData.expenses[expenses] = +sum;
     }
   },
   getExpensesMonth: () => {
