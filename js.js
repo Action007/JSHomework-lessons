@@ -10,6 +10,9 @@ const lastList = document.querySelectorAll('ul'),
 
 add.textContent = 'Глава 8: За пределами ES6';
 lastList[2].append(add);
+document.querySelector('.adv').remove();
+link.textContent = "Книга 3. this и Прототипы Объектов";
+document.body.style.backgroundImage = "url('image/you-dont-know-js.jpg')";
 
 book[1].after(book[0]);
 book[0].after(book[4]);
@@ -24,13 +27,6 @@ li2[3].after(li2[6]);
 li2[6].after(li2[8]);
 
 li3[8].after(add);
-
-
-document.querySelector('.adv').remove();
-link.textContent = "Книга 3. this и Прототипы Объектов";
-console.log(li3);
-
-
 
 
 // let start1 = document.getElementById('start');
