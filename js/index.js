@@ -23,7 +23,7 @@ let start1 = document.getElementById('start'),
   periodSelect = document.querySelector('.period-select'),
   periodAmount = document.querySelector('.period-amount'),
   incomeItems = document.querySelectorAll('.income-items');
-
+  
 let isNumber = function (n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
@@ -51,6 +51,7 @@ let appData = {
     appData.getExpenses();
     appData.getIncome();
     appData.getExpensesMonth();
+    appData.getIncomeMonth();
     appData.getAddExpenses();
     appData.getAddIncome();
     appData.getBudget();
@@ -101,7 +102,7 @@ let appData = {
       let incomeTitle = item.querySelector('.income-title').value;
       let incomeAmount = item.querySelector('.income-amount').value;
       if (incomeTitle !== '' && incomeAmount !== '') {
-        appData.expenses[incomeTitle] = incomeAmount;
+        appData.income[incomeTitle] = incomeAmount;
       }
     });
   },
@@ -127,8 +128,13 @@ let appData = {
       appData.expensesMonth += +appData.expenses[key];
     }
   },
+  getIncomeMonth: () => {
+    for (let key in appData.income) {
+      appData.incomeMonth += +appData.income[key];
+    }
+  },
   getBudget: () => {
-    appData.budgetMonth = appData.budget + appData.incomeMonth - appData.expensesMonth;
+    appData.budgetMonth = (appData.budget + appData.incomeMonth) - appData.expensesMonth;
     appData.budgetDay = Math.floor(appData.budgetMonth / 30);
   },
   getTargetMonth: () => {
@@ -173,6 +179,7 @@ let update = () => {
     appData.start();
   }
 };
+
 start1.addEventListener('click', update);
 button2.addEventListener('click', appData.addExpensesBlock);
 button1.addEventListener('click', appData.addIncomeBlock);
