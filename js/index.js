@@ -34,7 +34,7 @@ const start1 = document.getElementById('start'),
 let incomeItems = document.querySelectorAll('.income-items'),
   expensesItems = document.querySelectorAll('.expenses-items');
 
-const isNumber = function (n) {
+const isNumber = (n) => {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
@@ -76,16 +76,16 @@ class AppData {
     const str = document.querySelectorAll('input[placeholder="Наименование"]');
     const percent = document.querySelector('input[placeholder="Процент"]');
     str.forEach(i => {
-      i.addEventListener('input', function () {
+      i.addEventListener('input', () => {
         i.value = i.value.replace(/[\d]/, '');
       });
     });
     num.forEach(i => {
-      i.addEventListener('input', function () {
+      i.addEventListener('input', () => {
         i.value = i.value.replace(/[\D]/, '');
       });
     });
-    percent.addEventListener('input', function () {
+    percent.addEventListener('input', () => {
       percent.value = percent.value.replace(/[\D]/, '');
     });
   }
@@ -126,7 +126,7 @@ class AppData {
 
   getIncome() {
     incomeItems = document.querySelectorAll('.income-items');
-    incomeItems.forEach(function (item, i) {
+    incomeItems.forEach((item, i) => {
       const incomeTitle = item.querySelector('.income-title').value;
       const incomeAmount = item.querySelector('.income-amount').value;
       if (incomeTitle !== '' && incomeAmount !== '') {
@@ -137,7 +137,7 @@ class AppData {
 
   getExpenses() {
     expensesItems = document.querySelectorAll('.expenses-items');
-    expensesItems.forEach(function (item, i) {
+    expensesItems.forEach((item, i) => {
       const itemExpenses = item.querySelector('.expenses-title').value;
       const cashExpenses = item.querySelector('.expenses-amount').value;
       if (itemExpenses !== '' && cashExpenses !== '') {
@@ -148,7 +148,7 @@ class AppData {
 
   getAddExpenses() {
     const addExpenses = additionalExpensesItem.value.split(',');
-    addExpenses.forEach(function (item) {
+    addExpenses.forEach( (item) => {
       item = item.trim();
       if (item !== '') {
         this.addExpenses.push(item);
@@ -157,7 +157,7 @@ class AppData {
   }
 
   getAddIncome() {
-    additionalIncomeItem.forEach(function (item) {
+    additionalIncomeItem.forEach(item => {
       const itemValue = item.value.trim();
       if (itemValue !== '') {
         this.addIncome.push(itemValue);
