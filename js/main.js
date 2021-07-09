@@ -1,66 +1,68 @@
+'use strict';
 window.addEventListener('DOMContentLoaded', function () {
-  'use strict';
+  let h1 = document.querySelector('h1');
+  let h2 = document.querySelector('h2');
+  let h3 = document.querySelector('h3');
+  let h4 = document.querySelector('h4');
 
-  function countTimer(deadline) {
-    let timerHours = document.getElementById('timer-hours'),
-      timerMinutes = document.getElementById('timer-minutes'),
-      timerSeconds = document.getElementById('timer-seconds'),
-      span = document.querySelectorAll('.span');
-
-
-    function getTimeRemaining() {
-      let dateStop = new Date(deadline).getTime(),
-        dateNow = new Date().getTime(),
-        timeRemaining = (dateStop - dateNow) / 1000,
-        seconds = Math.floor(timeRemaining % 60),
-        minutes = Math.floor((timeRemaining / 60) % 60),
-        hours = Math.floor(timeRemaining / 60 / 60);
-      return {
-        timeRemaining,
-        hours,
-        minutes,
-        seconds
-      };
+  let firstTime = (value) => {
+    if (value < 10) {
+      value = '0' + value;
     }
+    return value;
+  };
 
-    function updateClock() {
-      let timer = getTimeRemaining();
-      timerHours.textContent = timer.hours;
-      timerMinutes.textContent = timer.minutes;
-      timerSeconds.textContent = timer.seconds;
-      if (timerHours.textContent < 10) {
-        timerHours.textContent = '0' + timerHours.textContent;
-      }
-      if (timerMinutes.textContent < 10) {
-        timerMinutes.textContent = '0' + timerMinutes.textContent;
-      }
-      if (timerSeconds.textContent < 10) {
-        timerSeconds.textContent = '0' + timerSeconds.textContent;
-      }
-      return timer;
+  let dayTime = (value) => {
+    if (value >= 5 && value <= 11) {
+      return 'Доброе утро!';
+    } else if (value >= 12 && value <= 17) {
+      return 'Добрый день!';
+    } else {
+      return 'Добрый вечер!';
     }
+  };
 
-    function setTime() {
-      let setTime = updateClock();
-      let setInt;
-      if (setTime.timeRemaining > 0) {
-        setInt = setInterval(updateClock, 1000);
-      } else {
-        clearInterval(setInt);
-        timerHours.textContent = '00';
-        timerMinutes.textContent = '00';
-        timerSeconds.textContent = '00';
-        timerHours.style.color = 'red';
-        timerMinutes.style.color = 'red';
-        timerSeconds.style.color = 'red';
-        span.forEach(i => {
-          i.style.color = 'red';
-        });
-      }
-    }
+  let getHours = () => {
+    let time = new Date();
+    let hours = dayTime(time.getHours());
 
-    setTime();
-  }
+    h1.textContent = hours;
+  };
 
-  countTimer('1 july 2021');
+  let day = () => {
+    let days = [
+      'Воскресенье',
+      'Понедельник',
+      'Вторник',
+      'Среда',
+      'Четверг',
+      'Пятница',
+      'Суббота'
+    ];
+    let day = new Date().getDay();
+    h2.textContent = `Сегодня: ${days[day]}`;
+  };
+
+  let getTime = () => {
+    let time = new Date();
+    let hours = firstTime(time.getHours());
+    let minutes = firstTime(time.getMinutes());
+    let seconds = firstTime(time.getSeconds());
+
+    h3.textContent = `Текущее время: ${hours}:${minutes}:${seconds}PM`;
+    setTimeout(getTime);
+  };
+
+  let newYear = (year) => {
+    let timeYear = new Date(year).getTime(),
+      dateNow = new Date().getTime(),
+      timeRemaining = (timeYear - dateNow) / 1000,
+      day = Math.floor(timeRemaining / 60 / 60 / 24);
+    h4.textContent = `До нового года осталось ${day} дней`;
+  };
+
+  day();
+  newYear('1 january 2022');
+  getHours();
+  getTime();
 });
