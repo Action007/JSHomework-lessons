@@ -28,25 +28,18 @@ window.addEventListener('DOMContentLoaded', function () {
       timerHours.textContent = timer.hours;
       timerMinutes.textContent = timer.minutes;
       timerSeconds.textContent = timer.seconds;
-      if (timerHours.textContent < 10) {
-        timerHours.textContent = '0' + timerHours.textContent;
-      }
-      if (timerMinutes.textContent < 10) {
-        timerMinutes.textContent = '0' + timerMinutes.textContent;
-      }
-      if (timerSeconds.textContent < 10) {
-        timerSeconds.textContent = '0' + timerSeconds.textContent;
-      }
-      return timer;
-    }
-
-    function setTime() {
-      let setTime = updateClock();
-      let setInt;
-      if (setTime.timeRemaining > 0) {
-        setInt = setInterval(updateClock, 1000);
+      if (timer.timeRemaining > 0) {
+        if (timerHours.textContent < 10) {
+          timerHours.textContent = '0' + timerHours.textContent;
+        }
+        if (timerMinutes.textContent < 10) {
+          timerMinutes.textContent = '0' + timerMinutes.textContent;
+        }
+        if (timerSeconds.textContent < 10) {
+          timerSeconds.textContent = '0' + timerSeconds.textContent;
+        }
       } else {
-        clearInterval(setInt);
+        clearInterval(SetTimer);
         timerHours.textContent = '00';
         timerMinutes.textContent = '00';
         timerSeconds.textContent = '00';
@@ -59,8 +52,9 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    setTime();
+    let SetTimer = setInterval(updateClock, 1000);
+    updateClock();
   }
 
-  countTimer('1 july 2021');
+  countTimer('10 july 2021');
 });
