@@ -85,27 +85,28 @@ window.addEventListener('DOMContentLoaded', function () {
       popupBtn = document.querySelectorAll('.popup-btn'),
       popupClose = document.querySelector('.popup-close');
 
-    let fadeIn = (element) => {
+    let fadeIn = (element, duration) => {
       element.style.display = 'block';
-      if(screen.width > 768){
-        element.style.opacity = '0';
-        let tick = () => {
-          element.style.opacity = +element.style.opacity + 0.1;
-          if (+element.style.opacity < 1) {
-            setTimeout(tick, 16);
-          }
-        };
-        tick();
-      }
+      element.style.opacity = '0';
+      let last = +new Date();
+      let tick = () => {
+        element.style.opacity = +element.style.opacity + (new Date() - last) / duration;
+        last = +new Date();
+        if (+element.style.opacity < 1) {
+          (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
+        }
+      };
+      tick();
     };
 
-    let fadeOut = (element) => {
+    let fadeOut = (element, duration) => {
+      element.style.opacity = '1';
+      let last = +new Date();
       let tick = () => {
+        element.style.opacity = +element.style.opacity - (new Date() - last) * duration;
+        last = +new Date();
         if (+element.style.opacity !== 0) {
-          element.style.opacity = +element.style.opacity - 0.1;
-          setTimeout(tick, 16);
-        } else {
-          element.style.display = 'none';
+          (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
         }
       };
       tick();
@@ -113,11 +114,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
     popupBtn.forEach(item => {
       item.addEventListener("click", () => {
-        fadeIn(popup);
+        fadeIn(popup, 300);
       });
     });
     popupClose.addEventListener("click", () => {
-      fadeOut(popup);
+      fadeOut(popup, 300);
     });
   };
   togglePopup();
