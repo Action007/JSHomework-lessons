@@ -190,9 +190,9 @@ window.addEventListener('DOMContentLoaded', function () {
       for (let i = 0; i < slide.length; i++) {
         let newDiv = document.createElement('li');
         newDiv.classList = 'dot';
-        if (i === 0){
+        if (i === 0) {
           newDiv.classList.add('dot-active');
-        } 
+        }
         dotParrent.append(newDiv);
       }
       dot = document.querySelectorAll('.dot');
@@ -275,4 +275,197 @@ window.addEventListener('DOMContentLoaded', function () {
     startSlide(1500);
   };
   slider();
+
+  //lesson23
+  const start = () => {
+    const img = document.querySelectorAll('.command__photo'),
+      calcItem = document.querySelector('.calc-block'),
+      form = document.querySelectorAll('form'),
+      calcItems = document.querySelectorAll('input.calc-item'),
+      form1Name = document.getElementById('form1-name'),
+      form2Name = document.getElementById('form2-name'),
+      form3Name = document.getElementById('form3-name'),
+      form1Email = document.getElementById('form1-email'),
+      form2Email = document.getElementById('form2-email'),
+      form3Email = document.getElementById('form3-email'),
+      form1Phone = document.getElementById('form1-phone'),
+      form2Phone = document.getElementById('form2-phone'),
+      form3Phone = document.getElementById('form3-phone'),
+      form2Message = document.getElementById('form2-message');
+
+    img.forEach(item => {
+      item.addEventListener('mouseenter', (e) => {
+        e.target.src = e.target.dataset.img;
+      });
+      item.addEventListener('mouseleave', (e) => {
+        e.target.src = e.target.dataset.img.replace(/a(?=\.jpg)/, '');
+      });
+    });
+
+    const validateName = (e) => {
+      e.target.value = e.target.value
+        .replace(/[^а-яё -]/gi, '')
+        .replace(/^[ -]+/g, '')
+        .replace(/[ -]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .split(' ')
+        .map((word) => {
+          if (word === '') {
+            return word;
+          }
+          return word[0].toUpperCase() + word.slice(1);
+        })
+        .join(' ');
+    };
+
+    const validateEmail = (e) => {
+      e.target.value = e.target.value.replace(/[^\w\s@-_.!~*'"]/ig, '');
+    };
+
+    const validatePhone = (e) => {
+      e.target.value = e.target.value.replace(/[^\d-()+]/g, '');
+    };
+
+    const validateMessage = (e) => {
+      e.target.value = e.target.value.replace(/[^а-я\s\-]/ig, '').trim();
+    };
+
+    // BLUR
+    calcItems.forEach((calcItem) => {
+      calcItem.addEventListener('blur', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+      });
+    });
+    form1Name.addEventListener('blur', validateName);
+    form2Name.addEventListener('blur', validateName);
+    form3Name.addEventListener('blur', validateName);
+    form1Email.addEventListener('blur', validateEmail);
+    form2Email.addEventListener('blur', validateEmail);
+    form3Email.addEventListener('blur', validateEmail);
+    form1Phone.addEventListener('blur', validatePhone);
+    form2Phone.addEventListener('blur', validatePhone);
+    form3Phone.addEventListener('blur', validatePhone);
+    form2Message.addEventListener('blur', validateMessage);
+  };
+  start();
+
+  // calculator
+  const calc = (price = 100) => {
+    const calcBlock = document.querySelector('.calc-block'),
+      calcType = document.querySelector('.calc-type'),
+      calcSquare = document.querySelector('.calc-square'),
+      calcCount = document.querySelector('.calc-count'),
+      calcDay = document.querySelector('.calc-day'),
+      totalValue = document.getElementById('total');
+
+    const countSum = () => {
+      let total = 0,
+        countValue = 1,
+        dayValue = 1;
+      const typeValue = calcType.options[calcType.selectedIndex].value;
+      let squareValue = +calcSquare.value;
+
+      if (calcCount.value > 1) {
+        countValue += (calcCount.value - 1) / 10;
+      }
+
+      if (calcDay.value && calcDay.value < 5) {
+        dayValue *= 2;
+      } else if (calcDay.value && calcDay.value < 10) {
+        dayValue *= 1.5;
+      }
+
+      if (typeValue && squareValue) {
+        total = price * typeValue * squareValue * countValue * dayValue;
+      }
+
+      totalValue.textContent = total;
+    };
+
+    calcBlock.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target.matches('select') || target.matches('input')) {
+        countSum();
+      }
+    });
+  };
+
+  calc(100);
+
+  //Validator
+
+  //header form
+  const valid1 = new Validator({
+    selector: '#form1',
+    pattern: {
+      name: /^[A-Za-zА-Яа-я]+$/,
+    },
+    method: {
+      'form1-phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+      'form1-email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ],
+      'form1-name': [
+        ['notEmpty'],
+        ['pattern', 'name']
+      ],
+    },
+  });
+
+  //footer form
+  const valid2 = new Validator({
+    selector: '#form2',
+    pattern: {
+      name: /^[A-Za-zА-Яа-я]+$/,
+      message: /^[А-Яа-я ,.]+$/
+    },
+    method: {
+      'form2-name': [
+        ['notEmpty'],
+        ['pattern', 'name']
+      ],
+      'form2-email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ],
+      'form2-phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+      'form2-message': [
+        ['notEmpty'],
+        ['pattern', 'message']
+      ]
+    },
+  });
+
+  //popup form
+  const valid3 = new Validator({
+    selector: '#form3',
+    pattern: {
+      name: /^[A-Za-zА-Яа-я]+$/,
+    },
+    method: {
+      'form3-name': [
+        ['notEmpty'],
+        ['pattern', 'name']
+      ],
+      'form3-email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ],
+      'form3-phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+    },
+  });
+
+  valid1.init();
+  valid2.init();
+  valid3.init();
 });
