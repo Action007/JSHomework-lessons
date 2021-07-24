@@ -279,11 +279,8 @@ window.addEventListener('DOMContentLoaded', function () {
   //lesson23
   const start = () => {
     const img = document.querySelectorAll('.command__photo'),
-      calcItem = document.querySelector('.calc-block'),
-      form = document.querySelectorAll('form'),
       calcItems = document.querySelectorAll('input.calc-item'),
       formName = document.querySelectorAll('.form-name'),
-      formEmail = document.querySelectorAll('.form-email'),
       formPhone = document.querySelectorAll('.form-phone'),
       formMessage = document.getElementById('form2-message');
 
@@ -298,10 +295,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
     const validateName = (e) => {
       e.target.value = e.target.value.replace(/[^\А-Яа-я ]/, '');
-    };
-
-    const validateEmail = (e) => {
-      e.target.value = e.target.value.replace(/\w+@\w+\.\w{2,}/ig, '');
     };
 
     const validatePhone = (e) => {
@@ -320,9 +313,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
     formName.forEach(element => {
       element.addEventListener('input', validateName);
-    });
-    formEmail.forEach(element => {
-      element.addEventListener('input', validateEmail);
     });
     formPhone.forEach(element => {
       element.addEventListener('input', validatePhone);
@@ -385,7 +375,8 @@ window.addEventListener('DOMContentLoaded', function () {
       form2 = document.getElementById('form2'),
       form3 = document.getElementById('form3'),
       input = document.querySelectorAll('input');
-    const statusMessage = document.createElement('div');
+    const statusMessage = document.createElement('div'),
+      img = document.createElement('img');
 
     statusMessage.style.cssText = `
     font-size: 2rem;
@@ -394,6 +385,8 @@ window.addEventListener('DOMContentLoaded', function () {
     const formFunc = (form) => {
       form.appendChild(statusMessage);
       statusMessage.textContent = loadMassage;
+      img.src = '../images/pac.gif';
+      statusMessage.appendChild(img);
 
       const formData = new FormData(form);
       let body = {};
