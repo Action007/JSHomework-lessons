@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', function () {
     updateClock();
   };
 
-  countTimer('11 july 2021');
+  countTimer('15 august 2021');
 
   // menu
   const toggleMenu = () => {
@@ -282,16 +282,10 @@ window.addEventListener('DOMContentLoaded', function () {
       calcItem = document.querySelector('.calc-block'),
       form = document.querySelectorAll('form'),
       calcItems = document.querySelectorAll('input.calc-item'),
-      form1Name = document.getElementById('form1-name'),
-      form2Name = document.getElementById('form2-name'),
-      form3Name = document.getElementById('form3-name'),
-      form1Email = document.getElementById('form1-email'),
-      form2Email = document.getElementById('form2-email'),
-      form3Email = document.getElementById('form3-email'),
-      form1Phone = document.getElementById('form1-phone'),
-      form2Phone = document.getElementById('form2-phone'),
-      form3Phone = document.getElementById('form3-phone'),
-      form2Message = document.getElementById('form2-message');
+      formName = document.querySelectorAll('.form-name'),
+      formEmail = document.querySelectorAll('.form-email'),
+      formPhone = document.querySelectorAll('.form-phone'),
+      formMessage = document.getElementById('form2-message');
 
     img.forEach(item => {
       item.addEventListener('mouseenter', (e) => {
@@ -303,23 +297,11 @@ window.addEventListener('DOMContentLoaded', function () {
     });
 
     const validateName = (e) => {
-      e.target.value = e.target.value
-        .replace(/[^а-яё -]/gi, '')
-        .replace(/^[ -]+/g, '')
-        .replace(/[ -]+$/g, '')
-        .replace(/\s+/g, ' ')
-        .split(' ')
-        .map((word) => {
-          if (word === '') {
-            return word;
-          }
-          return word[0].toUpperCase() + word.slice(1);
-        })
-        .join(' ');
+      e.target.value = e.target.value.replace(/[^\А-Яа-я ]/, '');
     };
 
     const validateEmail = (e) => {
-      e.target.value = e.target.value.replace(/[^\w\s@-_.!~*'"]/ig, '');
+      e.target.value = e.target.value.replace(/\w+@\w+\.\w{2,}/ig, '');
     };
 
     const validatePhone = (e) => {
@@ -327,25 +309,25 @@ window.addEventListener('DOMContentLoaded', function () {
     };
 
     const validateMessage = (e) => {
-      e.target.value = e.target.value.replace(/[^а-я\s\-]/ig, '').trim();
+      e.target.value = e.target.value.replace(/[^\А-Яа-я\d'";:_/.{},()?!* ]/, '');
     };
 
     // BLUR
     calcItems.forEach((calcItem) => {
-      calcItem.addEventListener('blur', (e) => {
+      calcItem.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '');
       });
     });
-    form1Name.addEventListener('blur', validateName);
-    form2Name.addEventListener('blur', validateName);
-    form3Name.addEventListener('blur', validateName);
-    form1Email.addEventListener('blur', validateEmail);
-    form2Email.addEventListener('blur', validateEmail);
-    form3Email.addEventListener('blur', validateEmail);
-    form1Phone.addEventListener('blur', validatePhone);
-    form2Phone.addEventListener('blur', validatePhone);
-    form3Phone.addEventListener('blur', validatePhone);
-    form2Message.addEventListener('blur', validateMessage);
+    formName.forEach(element => {
+      element.addEventListener('input', validateName);
+    });
+    formEmail.forEach(element => {
+      element.addEventListener('input', validateEmail);
+    });
+    formPhone.forEach(element => {
+      element.addEventListener('input', validatePhone);
+    });
+    formMessage.addEventListener('input', validateMessage);
   };
   start();
 
@@ -373,7 +355,7 @@ window.addEventListener('DOMContentLoaded', function () {
         dayValue *= 2;
       } else if (calcDay.value && calcDay.value < 10) {
         dayValue *= 1.5;
-      } 
+      }
 
       if (typeValue && squareValue) {
         total = price * typeValue * squareValue * countValue * dayValue;
@@ -391,4 +373,76 @@ window.addEventListener('DOMContentLoaded', function () {
   };
 
   calc(100);
+
+
+  // send-ajax-form
+
+  const sendForm = () => {
+    const errorMessage = 'Что-то пошло не так',
+      loadMassage = 'Загрузка...',
+      succsessMessage = 'Спасибо! Скоро мы с вами свяжемся!';
+    const form1 = document.getElementById('form1'),
+      form2 = document.getElementById('form2'),
+      form3 = document.getElementById('form3'),
+      input = document.querySelectorAll('input');
+    const statusMessage = document.createElement('div');
+
+    statusMessage.style.cssText = `
+    font-size: 2rem;
+    color: white;`;
+
+    const formFunc = (form) => {
+      form.appendChild(statusMessage);
+      statusMessage.textContent = loadMassage;
+
+      const formData = new FormData(form);
+      let body = {};
+
+      formData.forEach((val, key) => {
+        body[key] = val;
+      });
+      postData(body,
+        () => {
+          input.forEach(item => {
+            item.value = '';
+          });
+          statusMessage.textContent = succsessMessage;
+        },
+        (error) => {
+          console.log(error);
+          statusMessage.textContent = errorMessage;
+        });
+    };
+
+    form1.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form1);
+    });
+    form2.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form2);
+    });
+    form3.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form3);
+    });
+
+    const postData = (body, outputData, errorData) => {
+      const request = new XMLHttpRequest();
+
+      request.addEventListener('readystatechange', () => {
+        if (request.readyState !== 4) return;
+        if (request.status === 200) {
+          outputData();
+        } else {
+          errorData(request.status);
+        }
+      });
+      request.open('POST', './server.php');
+      request.setRequestHeader('Content-Type', 'aplication/json');
+      request.send(JSON.stringify(body));
+    };
+  };
+
+  sendForm();
 });
