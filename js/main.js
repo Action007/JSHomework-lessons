@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', function () {
     updateClock();
   };
 
-  countTimer('11 july 2021');
+  countTimer('15 august 2021');
 
   // menu
   const toggleMenu = () => {
@@ -172,6 +172,37 @@ window.addEventListener('DOMContentLoaded', function () {
   };
   tabs();
 
+  // Smooth scrolling
+  const scroll = () => {
+    const scrollBtn = document.querySelector('a[href="#service-block"]'),
+      scrollBlock = document.getElementById('service-block'),
+      scrollMenu = document.querySelectorAll('menu>ul>li>a');
+
+    scrollBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      scrollBlock.scrollIntoView({
+        behavior: "smooth",
+        block: 'start'
+      });
+    });
+
+    scrollMenu.forEach(item => {
+      item.addEventListener('click', (event) => {
+        let link = item.getAttribute('href').substring(1),
+          scrollBlock = document.getElementById(link);
+
+        event.preventDefault();
+
+        scrollBlock.scrollIntoView({
+          behavior: "smooth",
+          block: 'start'
+        });
+      });
+    });
+  };
+  scroll();
+
+
   // slider
   const slider = () => {
     const slide = document.querySelectorAll('.portfolio-item'),
@@ -190,9 +221,9 @@ window.addEventListener('DOMContentLoaded', function () {
       for (let i = 0; i < slide.length; i++) {
         let newDiv = document.createElement('li');
         newDiv.classList = 'dot';
-        if (i === 0){
+        if (i === 0) {
           newDiv.classList.add('dot-active');
-        } 
+        }
         dotParrent.append(newDiv);
       }
       dot = document.querySelectorAll('.dot');
@@ -275,4 +306,195 @@ window.addEventListener('DOMContentLoaded', function () {
     startSlide(1500);
   };
   slider();
+
+  //lesson23
+  const start = () => {
+    const img = document.querySelectorAll('.command__photo'),
+      calcItems = document.querySelectorAll('input.calc-item'),
+      formName = document.querySelectorAll('.form-name'),
+      formPhone = document.querySelectorAll('.form-phone'),
+      formMessage = document.getElementById('form2-message');
+
+    img.forEach(item => {
+      item.addEventListener('mouseenter', (e) => {
+        e.target.src = e.target.dataset.img;
+      });
+      item.addEventListener('mouseleave', (e) => {
+        e.target.src = e.target.dataset.img.replace(/a(?=\.jpg)/, '');
+      });
+    });
+
+    const validateName = (e) => {
+      e.target.value = e.target.value.replace(/[^\А-Яа-я ]/, '');
+    };
+
+    const validatePhone = (e) => {
+      e.target.value = e.target.value.replace(/[^\d-()+]/g, '');
+    };
+
+    const validateMessage = (e) => {
+      e.target.value = e.target.value.replace(/[^\А-Яа-я\d'";:_/.{},()?!* ]/, '');
+    };
+
+    // BLUR
+    calcItems.forEach((calcItem) => {
+      calcItem.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+      });
+    });
+    formName.forEach(element => {
+      element.addEventListener('input', validateName);
+    });
+    formPhone.forEach(element => {
+      element.addEventListener('input', validatePhone);
+    });
+    formMessage.addEventListener('input', validateMessage);
+  };
+  start();
+
+  // calculator
+  const calc = (price = 100) => {
+    const calcBlock = document.querySelector('.calc-block'),
+      calcType = document.querySelector('.calc-type'),
+      calcSquare = document.querySelector('.calc-square'),
+      calcCount = document.querySelector('.calc-count'),
+      calcDay = document.querySelector('.calc-day'),
+      totalValue = document.getElementById('total');
+
+    const countSum = () => {
+      let total = 0,
+        countValue = 1,
+        dayValue = 1;
+      const typeValue = calcType.options[calcType.selectedIndex].value;
+      let squareValue = +calcSquare.value;
+
+      if (calcCount.value > 1) {
+        countValue += (calcCount.value - 1) / 10;
+      }
+
+      if (calcDay.value && calcDay.value < 5) {
+        dayValue *= 2;
+      } else if (calcDay.value && calcDay.value < 10) {
+        dayValue *= 1.5;
+      }
+
+      if (typeValue && squareValue) {
+        total = price * typeValue * squareValue * countValue * dayValue;
+      }
+
+      totalValue.textContent = total;
+    };
+
+    calcBlock.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target.matches('select') || target.matches('input')) {
+        countSum();
+      }
+    });
+  };
+
+  calc(100);
+
+  // send-ajax-form
+
+  const sendForm = () => {
+    const errorMessage = 'Что-то пошло не так',
+      loadMassage = 'Загрузка...',
+      succsessMessage = 'Спасибо! Скоро мы с вами свяжемся!';
+    const form1 = document.getElementById('form1'),
+      form2 = document.getElementById('form2'),
+      form3 = document.getElementById('form3'),
+      input = document.querySelectorAll('input');
+    const statusMessage = document.createElement('div'),
+      img = document.createElement('img');
+
+    statusMessage.style.cssText = `
+    font-size: 2rem;
+    color: white;`;
+
+    const postData = (body) => {
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+
+        request.addEventListener('readystatechange', () => {
+          if (request.readyState !== 4) return;
+          if (request.status === 200) {
+            resolve();
+          } else {
+            reject(request.status);
+          }
+        });
+        request.open('POST', './server.php');
+        request.setRequestHeader('Content-Type', 'aplication/json');
+        request.send(JSON.stringify(body));
+      });
+    };
+
+    const resetValue = () => {
+      statusMessage.textContent = '';
+      img.style.cssText = ``;
+    };
+
+    const succsessFunc = () => {
+      input.forEach(item => {
+        item.value = '';
+      });
+      statusMessage.textContent = succsessMessage;
+      img.style.cssText = `
+      margin-right: 10px;
+      width: 25px;`;
+      img.src = 'images/success.png';
+      statusMessage.insertBefore(img, statusMessage.firstChild);
+
+      setTimeout(resetValue, 5000);
+    };
+
+    const errorFunc = (error) => {
+      console.error(error);
+      statusMessage.textContent = errorMessage;
+      img.style.cssText = `
+      margin-right: 10px;
+      width: 25px;`;
+      img.src = 'images/error.png';
+      statusMessage.insertBefore(img, statusMessage.firstChild);
+
+      setTimeout(resetValue, 5000);
+    };
+
+    const formFunc = (form) => {
+      form.appendChild(statusMessage);
+      statusMessage.textContent = loadMassage;
+      img.style.cssText = `
+      margin-right: 10px;
+      width: 25px;`;
+      img.src = 'images/load2.gif';
+      statusMessage.insertBefore(img, statusMessage.firstChild);
+
+      const formData = new FormData(form);
+      let body = {};
+
+      formData.forEach((val, key) => {
+        body[key] = val;
+      });
+      postData(body)
+        .then(succsessFunc)
+        .catch(error => errorFunc(error));
+    };
+
+    form1.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form1);
+    });
+    form2.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form2);
+    });
+    form3.addEventListener('submit', (event) => {
+      event.preventDefault();
+      formFunc(form3);
+    });
+
+  };
+
+  sendForm();
 });
