@@ -413,20 +413,9 @@ window.addEventListener('DOMContentLoaded', function () {
     color: white;`;
 
     const postData = (body) => {
-      return new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest();
-
-        request.addEventListener('readystatechange', () => {
-          if (request.readyState !== 4) return;
-          if (request.status === 200) {
-            resolve();
-          } else {
-            reject(request.status);
-          }
-        });
-        request.open('POST', './server.php');
-        request.setRequestHeader('Content-Type', 'aplication/json');
-        request.send(JSON.stringify(body));
+      return fetch('./server1.php', {
+        method: 'POST',
+        body: body
       });
     };
 
@@ -477,7 +466,12 @@ window.addEventListener('DOMContentLoaded', function () {
         body[key] = val;
       });
       postData(body)
-        .then(succsessFunc)
+        .then(response => {
+          if (response.status !== 200) {
+            throw new Error('status network not 200');
+          }
+          succsessFunc();
+        })
         .catch(error => errorFunc(error));
     };
 
