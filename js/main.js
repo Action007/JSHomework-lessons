@@ -413,7 +413,7 @@ window.addEventListener('DOMContentLoaded', function () {
     color: white;`;
 
     const postData = (body) => {
-      return fetch('./server1.php', {
+      return fetch('./server.php', {
         method: 'POST',
         body: body
       });
