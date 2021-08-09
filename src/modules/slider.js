@@ -1,182 +1,131 @@
-  // const slider = () => {
-  //   const slide = document.querySelectorAll('.portfolio-item'),
-  //     dotParrent = document.querySelector('.portfolio-dots'),
-  //     slider = document.querySelector('.portfolio-content');
-  //   let dot = document.querySelectorAll('.dot');
+class Slider {
+  constructor({
+    main,
+    wrap,
+    next,
+    prev,
+    infinity = false,
+    position = 0,
+    slidesToShow = 3,
+    responsive = [],
+  }) {
+    if (!main || !wrap) {
+      console.warn('slider-carousel: Необходимо 2 свойства, "main" и "wrap"!!!');
+    }
+    this.main = document.querySelector(main);
+    this.wrap = document.querySelector(wrap);
+    this.slides = document.querySelector(wrap).children;
+    this.next = document.querySelector(next);
+    this.prev = document.querySelector(prev);
+    this.slidesToShow = slidesToShow;
+    this.options = {
+      position,
+      infinity,
+      widthSlide: Math.floor(100 / this.slidesToShow),
+    };
+    this.responsive = responsive;
+  }
 
-  //   let currentSlide = 0,
-  //     interval;
-
-  //   const dots = () => {
-  //     dot.forEach(item => {
-  //       item.parentNode.removeChild(item);
-  //     });
-
-  //     for (let i = 0; i < slide.length; i++) {
-  //       let newDiv = document.createElement('li');
-  //       newDiv.classList = 'dot';
-  //       if (i === 0) {
-  //         newDiv.classList.add('dot-active');
-  //       }
-  //       dotParrent.append(newDiv);
-  //     }
-  //     dot = document.querySelectorAll('.dot');
-  //   };
-
-  //   const prevSlide = (elem, index, strClass) => {
-  //     elem[index].classList.remove(strClass);
-  //   };
-
-  //   const nextSlide = (elem, index, strClass) => {
-  //     elem[index].classList.add(strClass);
-  //   };
-
-  //   const autoPlaySlide = () => {
-  //     prevSlide(slide, currentSlide, 'portfolio-item-active');
-  //     prevSlide(dot, currentSlide, 'dot-active');
-  //     currentSlide++;
-  //     if (currentSlide >= slide.length) {
-  //       currentSlide = 0;
-  //     }
-  //     nextSlide(slide, currentSlide, 'portfolio-item-active');
-  //     nextSlide(dot, currentSlide, 'dot-active');
-  //   };
-  //   const startSlide = (time = 1500) => {
-  //     interval = setInterval(autoPlaySlide, time);
-  //   };
-  //   const stopSlide = () => {
-  //     clearInterval(interval);
-  //   };
-
-  //   slider.addEventListener('click', (event) => {
-  //     event.preventDefault();
-
-  //     let target = event.target;
-
-  //     if (!target.matches('.portfolio-btn, .dot')) {
-  //       return;
-  //     }
-
-  //     prevSlide(slide, currentSlide, 'portfolio-item-active');
-  //     prevSlide(dot, currentSlide, 'dot-active');
-
-  //     if (target.matches('#arrow-right')) {
-  //       currentSlide++;
-  //     } else if (target.matches('#arrow-left')) {
-  //       currentSlide--;
-  //     } else if (target.matches('.dot')) {
-  //       dot.forEach((item, index) => {
-  //         if (item === target) {
-  //           currentSlide = index;
-  //         }
-  //       });
-  //     }
-
-  //     if (currentSlide >= slide.length) {
-  //       currentSlide = 0;
-  //     }
-
-  //     if (currentSlide < 0) {
-  //       currentSlide = slide.length - 1;
-  //     }
-  //     nextSlide(slide, currentSlide, 'portfolio-item-active');
-  //     nextSlide(dot, currentSlide, 'dot-active');
-  //   });
-
-  //   slider.addEventListener('mouseover', (event) => {
-  //     if (event.target.matches('.portfolio-btn') ||
-  //       event.target.matches('.dot')) {
-  //       stopSlide();
-  //     }
-  //   });
-  //   slider.addEventListener('mouseout', (event) => {
-  //     if (event.target.matches('.portfolio-btn') ||
-  //       event.target.matches('.dot')) {
-  //       startSlide();
-  //     }
-  //   });
-
-  //   dots();
-  //   startSlide(1500);
-  // };
-
-  class Slider {
-    constructor({
-      main,
-      wrap,
-      slides,
-      next,
-      prev,
-      position = 0,
-      showSlides = 3,
-      infinity = false
-    }) {
-      if (!main && !wrap) {
-        console.warn('slider-carusel: Необходимо передать 2 свойства, "main" и "wrap"');
-      }
-      this.main = document.querySelector(main);
-      this.wrap = document.querySelector(wrap);
-      this.slides = document.querySelectorAll(slides);
-      this.next = document.querySelector(next);
-      this.prev = document.querySelector(prev);
-      this.showSlides = showSlides;
-      this.options = {
-        position,
-        infinity,
-        widthSlides: Math.floor(100 / this.showSlides)
-      };
+  init() {
+    this.addGloClass();
+    this.addStyle();
+    if (this.prev && this.next) {
+      this.controlSlider();
+    } else {
+      this.addArrow();
+      this.controlSlider();
     }
 
-    init() {
-      this.addClass();
-      this.addStyle();
-
-
-
-      if (this.prev && this.next) {
-        this.controlSlider();
-      } else {
-        this.addArrow();
-        this.controlSlider();
-      }
+    if (this.responsive) {
+      this.responseInit();
     }
+  }
 
-    addClass() {
-      this.main.classList.add('glo-slider');
-      this.wrap.classList.add('glo-slider__wrap');
-
-      for (const item of this.slides) {
-        item.classList.add('glo-slider__item');
-      }
+  addGloClass() {
+    this.main.classList.add('glo-slider');
+    this.wrap.classList.add('glo-slider__wrap');
+    for (const item of this.slides) {
+      item.classList.add('glo-slider__item');
     }
+  }
 
-    addStyle() {
-      const style = document.createElement('style');
-      style.id = 'sliderCarusel-style';
-      style.textContent = `
+  addStyle() {
+    let style = document.getElementById('sliderCarousel-style');
+
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'sliderCarousel-style';
+    }
+    style.textContent = `
       .glo-slider {
         overflow: hidden !important;
+        position: relative !important;
       }
-
-      .glo-slider__wrap{
+      .glo-slider__wrap {
         display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
         transition: transform 0.5s !important;
         will-change: transform !important;
       }
-
       .glo-slider__item {
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 ${this.options.widthSlides}% !important;
-        margin: 0 auto !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 ${this.options.widthSlide}% !important;
+        margin: 0 !important;
       }
+    `;
 
+    document.head.appendChild(style);
+  }
+
+  controlSlider() {
+    this.prev.addEventListener('click', this.prevSlider.bind(this));
+    this.next.addEventListener('click', this.nextSlider.bind(this));
+  }
+
+  prevSlider() {
+    if (this.options.infinity || this.options.position > 0) {
+      --this.options.position;
+      if (this.options.position < 0) {
+        this.options.position = this.slides.length - this.slidesToShow;
+      }
+      this.wrap.style.transform = `translateX(-${
+        this.options.position * this.options.widthSlide
+      }%)`;
+    }
+  }
+
+  nextSlider() {
+    if (this.options.infinity || this.options.position < this.slides.length - this.slidesToShow) {
+      ++this.options.position;
+      if (this.options.position > this.slides.length - this.slidesToShow) {
+        this.options.position = 0;
+      }
+      this.wrap.style.transform = `translateX(-${
+        this.options.position * this.options.widthSlide
+      }%)`;
+    }
+  }
+
+  addArrow() {
+    this.prev = document.createElement('button');
+    this.next = document.createElement('button');
+
+    this.prev.className = 'glo-slider__prev';
+    this.next.className = 'glo-slider__next';
+
+    this.main.appendChild(this.prev);
+    this.main.appendChild(this.next);
+
+    const style = document.createElement('style');
+    style.textContent = `
       .glo-slider__next,
       .glo-slider__prev {
         position: absolute;
         cursor: pointer;
-        top: 50%;
+        top: 20%;
         z-index: 5;
         margin: 0 10px;
         border: 20px solid transparent;
@@ -184,68 +133,58 @@
       }
 
       .glo-slider__next {
-        right: 20px;
+        right: -30px;
         border-left-color: #19bbfe
       }
 
       .glo-slider__prev {
-        left: 20px;
+        left: -30px;
         border-right-color: #19bbfe
       }
-
       .glo-slider__prev:hover,
       .glo-slider__next:hover,
       .glo-slider__prev:focus,
       .glo-slider__next:focus {
-        outline: transparent;
         background: transparent;
+        outline: none
       }
-      `;
-
-      document.head.append(style);
-    }
-
-    controlSlider() {
-      this.next.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.nextSlider();
-      });
-      this.prev.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.prevSlider();
-      });
-    }
-
-    prevSlider() {
-      if (this.options.infinity | this.options.position > 0) {
-        --this.options.position;
-        if (this.options.position < 0) {
-          this.options.position = this.slides.length - this.showSlides;
-        }
-        this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlides}%)`;
-      }
-    }
-
-    nextSlider() {
-      if (this.options.infinity | this.options.position < this.slides.length - this.showSlides) {
-        ++this.options.position;
-        if (this.options.position > this.slides.length - this.showSlides) {
-          this.options.position = 0;
-        }
-        this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlides}%)`;
-      }
-    }
-
-    addArrow() {
-      this.prev = document.createElement('button');
-      this.next = document.createElement('button');
-
-      this.prev.className = 'glo-slider__prev';
-      this.next.className = 'glo-slider__next';
-
-      this.main.append(this.prev);
-      this.main.append(this.next);
-    }
+    `;
+    document.head.appendChild(style);
   }
+
+  responseInit() {
+    const slidesToShowDefault = this.slidesToShow;
+    const allResponse = this.responsive.map((item) => item.breakpoint);
+    const maxResponse = Math.max(...allResponse);
+
+    const checkResponse = () => {
+      const widthWindow = document.documentElement.clientWidth;
+
+      if (widthWindow < maxResponse) {
+        for (let i = 0; i < allResponse.length; i++) {
+          if (widthWindow < allResponse[i]) {
+            this.slidesToShow = this.responsive[i].slidesToShow;
+            this.options.widthSlide = Math.floor(100 / this.slidesToShow);
+            this.wrap.style.transform = `translateX(-${
+              this.options.position * this.options.widthSlide
+            }%)`;
+            this.addStyle();
+          }
+        }
+      } else {
+        this.slidesToShow = slidesToShowDefault;
+        this.options.widthSlide = Math.floor(100 / this.slidesToShow);
+        this.wrap.style.transform = `translateX(-${
+          this.options.position * this.options.widthSlide
+        }%)`;
+        this.addStyle();
+      }
+    };
+
+    checkResponse();
+
+    window.addEventListener('resize', checkResponse);
+  }
+}
 
   export default Slider;

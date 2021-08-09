@@ -341,6 +341,7 @@ main a {
   padding: 5rem 0;
 }
 .portfolio-content {
+  position: relative;
   height: 775px;
   margin: 0 auto;
   display: block;
@@ -350,7 +351,7 @@ main a {
     height: 650px;
   }
 }
-/* .portfolio-item {
+.portfolio-item {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -374,12 +375,7 @@ main a {
   opacity: 1;
   -webkit-transition: opacity 0.5s;
   transition: opacity 0.5s;
-} */
-
-.portfolio__wrapper {
-  position: relative;
 }
-
 .portfolio-btn {
   position: absolute;
   cursor: pointer;
