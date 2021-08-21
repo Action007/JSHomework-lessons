@@ -20,6 +20,12 @@
     };
 
     const resetValue = () => {
+      let name = document.querySelectorAll('.form-name'),
+        tel = document.querySelectorAll('.form-tel');
+
+      name.forEach(item =>  item.value = '');
+      tel.forEach(item => item.value = '');
+
       statusMessage.textContent = '';
       img.style.cssText = ``;
     };

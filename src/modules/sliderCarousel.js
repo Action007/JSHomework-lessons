@@ -6,6 +6,14 @@ const sliderCarousel = (wrap, right, left, item, width1, width2) => {
 
   let slide;
 
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 576) {
+      slide = slider.offsetWidth * width1;
+    } else {
+      slide = slider.offsetWidth;
+    }
+  });
+
   if (window.innerWidth > 576) {
     slide = slider.offsetWidth * width1;
   } else {

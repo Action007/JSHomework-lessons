@@ -15,11 +15,11 @@ const calc = () => {
         type = calcTypeOption.options[calcTypeOption.selectedIndex].value;
 
       if (material !== '--' && type !== '--') {
-        calcTotal.value = material * type * calcInput.value;
+        calcTotal.value = Math.floor(material * type * calcInput.value);
       } else if (material !== '--') {
-        calcTotal.value = material * calcInput.value;
+        calcTotal.value = Math.floor(material * calcInput.value);
       } else if (type !== '--') {
-        calcTotal.value = type * calcInput.value;
+        calcTotal.value = Math.floor(type * calcInput.value);
       } else {
         calcTotal.value = calcInput.value;
       }
